@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title> DeepFocus+ Task Manager </title>
+    <style>
+        
+  /* Dashboard layout */
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+
+header {
+  background: #111;
+  color: #fff;
+  padding: 12px 20px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: calc(100vh - 50px);
+}
+
+aside {
+  background: #f6f7f8;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+
+aside nav a {
+  display: block;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  text-decoration: none;
+  color: #111;
+  border-radius: 6px;
+}
+
+aside nav a:hover {
+  background: #e6eaf0;
+}
+
+main {
+  padding: 20px;
+}
+/* Light theme refinement */
+body {
+  background-color: #f9fafb;
+  color: #222;
+}
+
+header {
+  background: #111827;
+  color: #fff;
+  font-family: "Segoe UI", sans-serif;
+  letter-spacing: 0.5px;
+}
+
+aside {
+  background: #f3f4f6;
+}
+
+main {
+  background: #fff;
+  border-radius: 8px;
+  margin: 16px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+}
+
+/* Inputs and buttons */
+#task-controls input,
+#task-controls button {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 4px;
+}
+
+#task-controls button:hover {
+  background-color: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+  cursor: pointer;
+}
+/* Task container layout */
+#tasklist {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+
+/* Buttons inside each task */
+.task button {
+  padding: 4px 8px;
+  font-size: 13px;
+  border: none;
+  border-radius: 4px;
+  margin-left: 6px;
+  cursor: pointer;
+}
+
+.task button:hover {
+  opacity: 0.8;
+}
+
+
+/* ===== TASK ITEM BASE STYLE ===== */
+
+.task:hover {
+    transform: scale(1.01);
+    background-color: #f9fafb;
+
+
+}
+
+.task::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  border-radius: 6px 0 0 6px;
+}
+
+.task.high::before   { background: #e11d48; } /* red  */
+.task.medium::before { background: #facc15; } /* amber */
+.task.low::before    { background: #22c55e; } /* green */
+/* ===== PRIORITY COLOUR TAGS ===== */
+.high {
+    border-left: 3px solid #e74c3c; /* deep coral red */
+}
+.medium {
+    border-left: 3px solid #f1c40f; /* soft amber */
+}
+.low {
+    border-left: 3px solid #2ecc71; /* calm green */
+}
+
+/* ===== OVERDUE TASK STYLE ===== */
+.overdue {
+    box-shadow: inset 3px 0 0 #c0392b;
+    background-color: #fafafa;
+    filter: brightness(0.98);
+    transition: all 0.2s ease-in-out;
+}
+.overdue:hover {
+    background-color: #fdf2f2;
+}
+
+/* ===== TASK ITEM BASE STYLE ===== */
+.task {
+    padding: 8px 12px;
+    margin: 8px 0;
+    border-radius: 0; /* no rounded corners */
+    background-color: #fff;
+    border: 1px solid #eee;
+    transition: all 0.15s ease-in-out;
+}
+.task:hover {
+    transform: scale(1.01);
+    background-color: #f9fafb;
+}
+.error-box {
+  display: none; /* hide by default */
+  border: 1.5px solid #e11d48;
+  background: #fffafa;
+  color: #b91c1c;
+  font-size: 0.95rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(225, 29, 72, 0.15);
+  width: fit-content;
+  margin: 10px 0;
+  font-weight: 500;
+}
+
+#errorMessage,
+#statusMessage {
+  display: none;
+}
+
+</style> 
+</head>
+<body>
+    <header>DeepFocus+</header>
+
+<div class="dashboard">
+  <aside>
+    <nav>
+      <a href="#">Tasks</a>
+      <a href="#">Statistics</a>
+      <a href="#">Settings</a>
+    </nav>
+  </aside>
+
+  <main>
+    <section id="task-controls">
+      <input type="text" id="taskInput" placeholder="Enter a new task!">
+      <input type="date" id="dueDateInput" placeholder="Due date">
+      <button id="addTaskBtn">Add Task</button>
+      <select id="priorityInput">
+      <option value="High">High</option>
+      <option value="Medium" selected>Medium</option>
+      <option value="Low">Low</option>
+    </select>
+
+      <button id="smartSortBtn">Smart Sort (AI)</button>
+      <p id="statusMessage" class="error-box"></p>
+
+    </section>
+
+    <section id="tasklist"></section>
+  </main>
+</div>
+
+    <footer>
+    </footer>
+    <script src="app.js"></script>
+</body>
+</html>
