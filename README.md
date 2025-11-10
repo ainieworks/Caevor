@@ -42,4 +42,5 @@ pip install -r requirements.txt
 # Run the server
 python app.py
 # open http://127.0.0.1:5000/health
+# Synced successfully between VS Code and GitHub 🎯
 
