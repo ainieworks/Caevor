@@ -1,0 +1,148 @@
+🗓️ Week 1 — Feature Development Log  
+Feature: Smart Task Input + Date Validation  
+Date: [October 17.2025]  
+
+Summary:  
+Implemented validation for task input and due date in the DeepFocus+ app.  
+- Empty task entries now trigger an alert.  
+- Past dates cannot be added; an alert notifies the user.  
+- Tasks with valid due dates are stored and scored automatically.  
+- Smart sorting reorganizes tasks based on computed priority.  
+
+Outcome:  
+
+Core task module is now stable, functional, and ready for further AI integration in upcoming iterations (focus analytics, adaptive learning, and task prediction).
+Feature: Overdue task detection and visual alert
+Status: ✅ Implemented basic version with badge highlight
+Next Iteration Idea: Replace badge with minimalist red dot and hover tooltip (for elegance and user focus)
+UI Decision:
+Focus on functional core for DeepFocus+. Aesthetic refinements (badge → hover dot / hover box system) postponed to design phase.
+Goal: Maintain visual calm, minimal distractions, and ensure all logic is stable before styling layers.
+You said:
+This week was between 20 October to 26th of October... You know what improvements I added in this week. Everything is discussed in this chat before. So, according this , prepare a log entry of accelration week 2. Go ahead 
+🧠 FYP Technical Log – DeepFocus+ Development Sprint
+
+Date: 30 Oct 2025
+Sprint Focus: UI Refinement & Next Phase Planning
+Task: Log technical notes for next development sprint
+
+✅ Current Sprint (Completed)
+
+Module: Priority Tag System
+
+Verified and confirmed existing CSS-based visual priority system (.task.high, .task.medium, .task.low).
+
+Validated JavaScript binding logic for dynamic priority class assignment.
+
+Confirmed consistent rendering and alignment in browser view.
+
+Outcome: Feature finalised with minimal, professional aesthetic aligned to DeepFocus+ philosophy.
+
+🚀 Next Development Sprint (Planned)
+
+Objective: Advance DeepFocus+ from static planner to intelligent adaptive assistant.
+
+Next Sprint Modules:
+
+Smart Analytics Dashboard
+
+Add statistics view (e.g., total tasks, completed %, overdue count).
+
+Optional: Include a simple pie chart (using Recharts or Chart.js) for visual feedback.
+
+AI-Driven Focus Insights
+
+Begin integrating task pattern tracking: identify frequently postponed tasks.
+
+Design “Focus Score” metric using completion rates and consistency.
+
+Persistent Storage Enhancements
+
+Transition from localStorage to JSON file or database (Flask/Django backend prep).
+
+Ensure compatibility with cloud or local export (CSV / PDF).
+
+Interface Refinements
+
+Add date filters (Today / Upcoming / Completed).
+
+Implement responsive design adjustments for smaller screens.
+
+Documentation
+
+Update README with feature progress and visual samples.
+
+Maintain weekly sprint summaries in FYP_Weekly_Log.txt.
+
+🎯 Development Vision
+
+“Shift DeepFocus+ from a smart to-do list into a self-learning study companion that understands habits, analyses productivity, and adapts focus suggestions intelligently.”
+
+📅 Sprint 6 – Adaptive Priority Algorithm (Design Planning)
+
+Goal:
+Develop the logic for the self-adaptive priority module that learns user focus behaviour.
+
+Core Notes:
+• Current system uses static colour-coded priority levels (Low–Medium–High).
+• Next phase → introduce adaptive scaling: algorithm adjusts task priority based on session length, user interruptions, and time of day.
+• Planned approach:
+  – Track task completion times and skipped sessions.
+  – Use weighted average to re-rank upcoming tasks.
+  – Integrate distraction detection metrics from earlier notes.
+• Required data sources: daily session logs, focus duration, distraction count.
+• Interface update: minimal UI indicator (dynamic priority ring around tasks).
+Next Actions:
+1. Prototype algorithm logic (pseudo-code) tomorrow evening.
+2. Test with sample data before connecting to database module.
+3. Document model inputs/outputs for backend integration.
+📅 Sprint 7 – Backend Logic Integration (Planning Phase)
+
+Goal:
+Connect the adaptive priority algorithm (Sprint 6) with the backend data system for real-time priority adjustments and task tracking.
+
+Core Notes:
+• The backend will store each task’s data (priority level, focus duration, interruptions, and completion rate) in JSON format.  
+• Adaptive weights from the algorithm will be synced automatically after each focus session.  
+• Maintain a lightweight cache for quick access to updated priorities during app runtime.  
+• Add a verification layer to prevent invalid or duplicate entries during data sync.  
+• Optimise database writes to improve response time and prevent unnecessary updates.  
+• Ensure compatibility with the current task and user data models used in previous modules.
+
+Next Actions:
+1. Define the data structure for adaptive weights and priority history.  
+2. Prototype the sync function between the adaptive algorithm and backend.  
+3. Document the data flow between modules for future integration and testing.
+🧠 FYP Technical Log – DeepFocus+ Development Sprint
+📅 Date: 5 Nov 2025
+Sprint Focus: Backend Logic & Adaptive Priority Planning
+
+✅ Current Progress (Completed)
+
+Reviewed and validated previous sprint logic for adaptive priority algorithm (Sprint 6).
+
+Defined backend data requirements for storing adaptive weights and focus metrics.
+
+Updated development timeline to integrate backend logic after exam week.
+
+Planned module structure for algorithm–backend sync (JSON format).
+
+🚀 Next Sprint Objectives (Post-Exam Implementation)
+Module: Adaptive Priority Backend
+
+Create backend data structure for:
+• Task ID
+• Focus duration
+• Distraction count
+• Completion rate
+• Adaptive weight history
+
+Prototype data sync between algorithm and backend.
+
+Add logic to automatically re-rank task priorities after each focus session.
+
+🎯 Goal:
+Transition DeepFocus+ from front-end adaptive design to a fully integrated intelligent backend system that continuously learns from user focus patterns and adjusts priorities dynamically.
+
+Status: Planning Phase – Backend schema design drafted; integration to begin after exams (Week of 10 Nov 2025).
+8 Nov 2025 — Priority Detection v0.1: Added adaptive weight model (adaptWeight) with session APIs (startSession/endSession), integrated into computePriorityScore, auto re-rank on session end. Next: persist session history & export.
