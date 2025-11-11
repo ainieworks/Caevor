@@ -1,0 +1,45 @@
+========================================
+📘 Digital Journal and Weekly Log – DeepFocus+
+========================================
+
+Note:
+Previous weekly logs (before 10 Nov 2025) are stored in 'FYP_Weekly_Log.txt'.
+From Week 1 (10–16 Nov 2025) onwards, all updates are maintained here.
+
+----------------------------------------
+WEEK 1 — 10 to 16 November 2025
+----------------------------------------
+
+🎯 Sprint Goal:
+Baseline backend stub + UI hook established  
+Full GitHub integration verified + automation activated
+
+🗓️ Date: 11 November 2025  
+🧭 Milestone: Environment Setup Completed
+
+Summary:
+• Initialised local Git repository and linked to remote (DeepFocusPlus)  
+• Configured backend, frontend, docs, research, and test directories  
+• Verified push, pull, and commit operations between VS Code and GitHub  
+• Created Sprint 1 milestone and backlog issues with proper labelling  
+• Enabled automation workflows (auto-add, review triggers, and status updates)  
+• Tested live board synchronisation with project dashboard
+
+Reflection:
+> “Today’s setup made DeepFocus+ behave like a real production project —  
+> automation, tracking, and structure finally connected end-to-end.”  
+
+✅ Status:
+🟢 Repository verified  
+🟢 Automation active  
+🟢 Sprint 1 started  
+
+Next Steps:
+- Implement `/api/priority` backend route  
+- Validate JSON schema and test local Flask server  
+- Connect API to frontend JS event layer  
+
+----------------------------------------
+(End of Week 1 entry)
+----------------------------------------
+
