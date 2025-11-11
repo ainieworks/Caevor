@@ -42,4 +42,37 @@ Next Steps:
 ----------------------------------------
 (End of Week 1 entry)
 ----------------------------------------
+----------------------------------------
+🗓️ Date: 11 November 2025 (Evening Update)
+🧩 Phase: Infrastructure Setup & Version Control Integration
+✅ Status: Completed
+
+Summary:
+Finalised setup of GitHub repository, linked VS Code environment, and confirmed workflow automation. 
+All corrupted or duplicate files were removed and structure standardised for professional project tracking.
+
+Key Actions:
+• Verified bidirectional sync between VS Code ↔ GitHub (commit/push tested)
+• Configured main branch and project board automation successfully
+• Created and organised docs folder with summary, concept, and unified journal files
+• Archived old FYP_Weekly_Log.txt and introduced consolidated Digital Journal
+• Confirmed stability of repository and milestone tracking
+
+Reflection:
+> “It’s satisfying to see everything fall into place — from code to documentation,  
+> DeepFocus+ finally feels like a structured, real-world project.”  
+
+Result:
+🟢 Repository clean and verified  
+🟢 Board and automation active  
+🟢 Phase 1 officially completed  
+
+Next Step:
+- Begin active Sprint 1 development tasks (backend + UI hook)
+- Schedule GitHub research project setup later this week
+
+----------------------------------------
+(End of Phase 1 Entry)
+----------------------------------------
+
 
