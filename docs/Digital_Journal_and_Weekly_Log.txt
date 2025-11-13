@@ -1,0 +1,78 @@
+========================================
+📘 Digital Journal and Weekly Log – DeepFocus+
+========================================
+
+Note:
+Previous weekly logs (before 10 Nov 2025) are stored in 'FYP_Weekly_Log.txt'.
+From Week 1 (10–16 Nov 2025) onwards, all updates are maintained here.
+
+----------------------------------------
+WEEK 1 — 10 to 16 November 2025
+----------------------------------------
+
+🎯 Sprint Goal:
+Baseline backend stub + UI hook established  
+Full GitHub integration verified + automation activated
+
+🗓️ Date: 11 November 2025  
+🧭 Milestone: Environment Setup Completed
+
+Summary:
+• Initialised local Git repository and linked to remote (DeepFocusPlus)  
+• Configured backend, frontend, docs, research, and test directories  
+• Verified push, pull, and commit operations between VS Code and GitHub  
+• Created Sprint 1 milestone and backlog issues with proper labelling  
+• Enabled automation workflows (auto-add, review triggers, and status updates)  
+• Tested live board synchronisation with project dashboard
+
+Reflection:
+> “Today’s setup made DeepFocus+ behave like a real production project —  
+> automation, tracking, and structure finally connected end-to-end.”  
+
+✅ Status:
+🟢 Repository verified  
+🟢 Automation active  
+🟢 Sprint 1 started  
+
+Next Steps:
+- Implement `/api/priority` backend route  
+- Validate JSON schema and test local Flask server  
+- Connect API to frontend JS event layer  
+
+----------------------------------------
+(End of Week 1 entry)
+----------------------------------------
+----------------------------------------
+🗓️ Date: 11 November 2025 (Evening Update)
+🧩 Phase: Infrastructure Setup & Version Control Integration
+✅ Status: Completed
+
+Summary:
+Finalised setup of GitHub repository, linked VS Code environment, and confirmed workflow automation. 
+All corrupted or duplicate files were removed and structure standardised for professional project tracking.
+
+Key Actions:
+• Verified bidirectional sync between VS Code ↔ GitHub (commit/push tested)
+• Configured main branch and project board automation successfully
+• Created and organised docs folder with summary, concept, and unified journal files
+• Archived old FYP_Weekly_Log.txt and introduced consolidated Digital Journal
+• Confirmed stability of repository and milestone tracking
+
+Reflection:
+> “It’s satisfying to see everything fall into place — from code to documentation,  
+> DeepFocus+ finally feels like a structured, real-world project.”  
+
+Result:
+🟢 Repository clean and verified  
+🟢 Board and automation active  
+🟢 Phase 1 officially completed  
+
+Next Step:
+- Begin active Sprint 1 development tasks (backend + UI hook)
+- Schedule GitHub research project setup later this week
+
+----------------------------------------
+(End of Phase 1 Entry)
+----------------------------------------
+
+
