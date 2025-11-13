@@ -9,6 +9,12 @@ DeepFocus+ is a final-year research and development project exploring how AI-dri
 It integrates an adaptive backend, visual task management UI, and research components for focus and productivity tracking.
 
 ---
+## 🎯 Model-Driven Software Development (MDSD)
+
+DeepFocus+ now includes MDSD-based modelling as part of its FYP structure.  
+All MDSD artefacts—including **domain models, meta-models, activity diagrams, state machine diagrams, and sequence mappings**—are now maintained in the `/docs/DeepFocusPlus_MDSD_Documentation.md` file.
+
+This ensures clear alignment with Model-Driven Software Development principles and supports future automated transformations from models to implementation.
 
 ## 🧠 Core Features
 - Adaptive priority algorithm (AI-based task weighting)
