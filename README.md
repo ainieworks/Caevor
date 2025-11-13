@@ -7,9 +7,6 @@ Smart, self-adaptive study & focus planner designed to help learners manage time
 ## 🌟 Overview
 DeepFocus+ is a final-year research and development project exploring how AI-driven logic can adapt to human learning behaviour.  
 It integrates an adaptive backend, visual task management UI, and research components for focus and productivity tracking.
-## Model-Driven Software Development (MDSD)
-This project now includes MDSD-based modelling, including domain models, meta-models, activity diagrams, and state machine diagrams. All related documentation is available in `/docs/DeepFocusPlus_MDSD_Documentation.md`.
-
 
 ---
 
@@ -46,4 +43,3 @@ pip install -r requirements.txt
 python app.py
 # open http://127.0.0.1:5000/health
 # Synced successfully between VS Code and GitHub 🎯
-
