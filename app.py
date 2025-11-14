@@ -1,0 +1,98 @@
+from flask import Flask, jsonify, request
+from datetime import date, datetime
+
+app = Flask(__name__)
+
+@app.post("/api/priority")
+def priority():
+    """
+    Priority Scoring API (v1)
+    --------------------------------
+    Backend endpoint that receives a list of tasks and returns
+    a sorted list with computed scores.
+
+    Why this exists:
+    - Frontend gives fast, local results (offline-friendly)
+    - Backend gives consistent, validated, long-term logic
+    - Future analytics & adaptive learning depend on backend scoring
+
+    Expected JSON:
+    {
+      "tasks": [
+        {
+          "text": "IELTS Writing",
+          "importance": "High",
+          "dueDate": "2025-11-16"   # optional
+        }
+      ]
+    }
+    """
+
+    # -----------------------------------------
+    # Safely read JSON from request
+    # -----------------------------------------
+    data = request.get_json(silent=True) or {}
+    tasks = data.get("tasks")
+
+    if not isinstance(tasks, list):
+        return jsonify(error="Invalid payload: 'tasks' list required"), 400
+
+    today = date.today()
+    scored = []
+
+    # -----------------------------------------
+    # Compute score for each task
+    # -----------------------------------------
+    for raw in tasks:
+        task = raw or {}
+        score = 0
+
+        # ---------- Importance weight ----------
+        imp = (task.get("importance") or "Medium").lower()
+
+        if imp == "high":
+            score += 40
+        elif imp == "medium":
+            score += 20
+        elif imp == "low":
+            score += 5
+
+        # ---------- Deadline proximity ----------
+        due_str = task.get("dueDate")
+        if due_str:
+            try:
+                due = datetime.fromisoformat(due_str).date()
+                days_left = (due - today).days
+
+                if days_left <= 1:
+                    score += 50
+                elif days_left <= 3:
+                    score += 30
+                elif days_left <= 7:
+                    score += 15
+                elif days_left <= 14:
+                    score += 10
+
+            except ValueError:
+                pass  # Ignore invalid dates safely
+
+        # Build enriched task result
+        scored.append({
+            **task,
+            "score": score
+        })
+
+    # -----------------------------------------
+    # Sort highest → lowest score
+    # -----------------------------------------
+    scored.sort(key=lambda t: t.get("score", 0), reverse=True)
+
+    # -----------------------------------------
+    # Standardised API response
+    # -----------------------------------------
+    return jsonify(
+        result="ok",
+        count=len(scored),
+        tasks=scored
+    ), 200
+
