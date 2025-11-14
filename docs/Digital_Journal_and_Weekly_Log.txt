@@ -74,5 +74,29 @@ Next Step:
 ----------------------------------------
 (End of Phase 1 Entry)
 ----------------------------------------
+🗓️ 14 November 2025  
+🧩 Phase: Backend Development – Sprint 1  
+🎯 Milestone: Priority Scoring API (v1) Completed
+
+Summary:
+• Implemented the first version of the /api/priority backend endpoint.  
+• Added full payload validation, importance/deadline scoring, and structured JSON output.  
+• Cleaned and commented the entire route to meet professional backend standards.  
+• Standardised file structure by relocating app.py to project root and removing outdated backend copy.  
+• Confirmed endpoint functionality via PowerShell POST request (Status 200 OK).  
+• Closed GitHub Issue #3 automatically with commit message.
+
+Reflection:
+> “Today’s backend upgrade made DeepFocus+ finally feel like a real full-stack application.  
+> Everything now talks cleanly: frontend logic, backend scoring, API structure, and sprint tracking.”  
+
+Status:
+🟢 API live and tested  
+🟢 Issue #3 closed on GitHub  
+🟢 Repository structure cleaned  
+
+Next Steps:
+- Begin wiring frontend events to backend (Issue #6).  
+- Add backend schema notes to docs later this week.  
 
 

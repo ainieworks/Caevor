@@ -146,3 +146,22 @@ Transition DeepFocus+ from front-end adaptive design to a fully integrated intel
 
 Status: Planning Phase – Backend schema design drafted; integration to begin after exams (Week of 10 Nov 2025).
 8 Nov 2025 — Priority Detection v0.1: Added adaptive weight model (adaptWeight) with session APIs (startSession/endSession), integrated into computePriorityScore, auto re-rank on session end. Next: persist session history & export.
+🗓️ Week 1 — Backend Progress Update  
+📌 Date: 14 November 2025  
+Feature: Priority Scoring API (v1)
+
+Tasks Completed:
+• Implemented backend scoring logic for task priority (importance + due date).  
+• Added safe JSON parsing, schema validation, and consistent API response structure.  
+• Added inline comments for maintainability and future adaptive logic integration.  
+• Verified endpoint using PowerShell POST request — returned correct score (40 + deadline points).  
+• Cleaned backend folder structure; app.py now properly located at project root.  
+• Published changes to GitHub (commit closes Issue #3).
+
+Outcome:
+Backend foundation is stable and ready for frontend integration.  
+This completes the first backend milestone of Sprint 1.
+
+Next Actions (Upcoming Sprint Work):
+• Issue #6 — Connect frontend (index_main.html + app.js) to backend API.  
+• Start designing adaptive weight schema for backend v2 scoring.  
