@@ -32,7 +32,11 @@ def priority():
     # Safely read JSON from request
     # -----------------------------------------
     data = request.get_json(silent=True) or {}
-    tasks = data.get("tasks")
+    tasks = [normalize_task(t) for t in data.get("tasks", [])]
+
+    if not isinstance(tasks, list):
+        return jsonify(error="Invalid payload: 'tasks' list required"), 400
+
 
     if not isinstance(tasks, list):
         return jsonify(error="Invalid payload: 'tasks' list required"), 400
@@ -95,4 +99,17 @@ def priority():
         count=len(scored),
         tasks=scored
     ), 200
+# -------------------------------------
+# Task Schema (Backend Internal Model)
+# -------------------------------------
+
+def normalize_task(task):
+    return {
+        "text": task.get("text", "").strip(),
+        "importance": task.get("importance", "Medium"),
+        "dueDate": task.get("dueDate", None),
+        "createdAt": task.get("createdAt", None),
+        "completed": task.get("completed", False)
+    }
+
 
