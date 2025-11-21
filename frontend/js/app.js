@@ -357,48 +357,54 @@ document.addEventListener("DOMContentLoaded", function () {
   /* =========================
      Scoring
      ========================= */
-  function computePriorityScore(taskobj) {
-    const t =
-      typeof taskobj === "string"
-        ? {
-            text: taskobj,
-            importance: "Medium",
-            dueDate: null,
-            createdAt: Date.now(),
-          }
-        : taskobj;
-
+  function computePriorityScore(t) {
     let score = 0;
 
-    // Importance points
-    const imp = (t.importance || "Medium").toLowerCase();
-    if (imp === "high") score += 40;
-    else if (imp === "medium") score += 20;
-    else if (imp === "low") score += 5;
+    // 1. Importance weighting
+    const importanceWeight = {
+        High: 5,
+        Medium: 3,
+        Low: 1
+    };
+    score += importanceWeight[t.importance] || 0;
 
-    // Deadline proximity
+    // 2. Deadline scoring
     if (t.dueDate) {
-      const today = new Date();
-      const due = new Date(t.dueDate);
-      const msPerDay = 24 * 60 * 60 * 1000;
-      const daysLeft = Math.ceil((due - today) / msPerDay);
+        const due = new Date(t.dueDate);
+        const now = new Date();
+        const diffDays = (due - now) / (1000 * 60 * 60 * 24);
 
-      if (daysLeft <= 1) score += 50;
-      else if (daysLeft <= 3) score += 30;
-      else if (daysLeft <= 7) score += 15;
-      else if (daysLeft <= 14) score += 10;
-      else if (daysLeft < 30) score += 5;
+        if (diffDays <= 1) score += 4;
+        else if (diffDays <= 3) score += 3;
+        else if (diffDays <= 7) score += 2;
+        else score += 1;
     }
 
-    // Quick win bonus
-    if (t.duration && Number(t.duration) <= 30) score += 10;
+    // 3. Task age
+    if (t.createdAt) {
+        const ageDays =
+            (Date.now() - new Date(t.createdAt)) / (1000 * 60 * 60 * 24);
 
-    // Learned adaptive weight (bounded)
+        if (ageDays > 14) score += 3;
+        else if (ageDays > 7) score += 2;
+        else if (ageDays > 3) score += 1;
+    }
+
+    // 4. Incomplete bonus
+    if (!t.completed) score += 1;
+
+    // 5. Quick-win boost
+    if (t.duration && Number(t.duration) <= 30) {
+        score += 10;
+    }
+
+    // 6. Adaptive weight (bounded)
     const w = Math.max(-40, Math.min(40, Number(t.adaptWeight || 0)));
     score += w;
 
     return score;
-  }
+}
+
 
   // Initial load
   loadTasks();
