@@ -118,6 +118,46 @@ def normalize_task(task):
 def health_check():
     return {"status": "ok", "message": "Backend running"}, 200
 
+# -------------------------------
+#   NEW API ENDPOINT STUBS (v2)
+# -------------------------------
+
+@app.route('/tasks/score', methods=['POST'])
+def submit_score():
+    # TODO: Add score processing logic
+    data = request.get_json()
+    return {"message": "score saved", "weighted_score": None}
+
+
+@app.route('/suggestions/next', methods=['GET'])
+def get_next_suggestion():
+    # TODO: Add adaptive suggestion logic
+    return {
+        "suggestion_text": None,
+        "reason": None,
+        "recommended_duration": None
+    }
+
+
+@app.route('/sessions/end', methods=['POST'])
+def end_session():
+    # TODO: Add session ending and save logic
+    data = request.get_json()
+    return {
+        "message": "session saved",
+        "session_summary": data
+    }
+
+
+@app.route('/plan/adaptive', methods=['GET'])
+def get_adaptive_plan():
+    # TODO: Add adaptive session planning logic
+    return {
+        "recommended_session_type": None,
+        "recommended_duration": None,
+        "recommended_category": None,
+        "reasoning": None
+    }
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5000, debug=True)
