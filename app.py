@@ -150,13 +150,46 @@ def generate_dynamic_session(fatigue, streak, recent_scores):
             "reasoning": None
         }
     """
+        # Base duration and reasoning list
+    base = 30  # default session duration (minutes)
+    duration = base
+    reason_list = []
+        # Rule A: High fatigue reduces duration
+    if fatigue is not None and fatigue >= 7:
+        duration -= 10
+        reason_list.append("High fatigue level detected")
+        # Rule B: Strong streak increases duration
+    if streak is not None and streak >= 5:
+        duration += 5
+        reason_list.append("Strong focus streak detected")
+        # Rule C & D: Score trend analysis
+    if recent_scores and len(recent_scores) >= 3:
+        avg_score = sum(recent_scores[-3:]) / 3
+
+        if avg_score < 60:
+            duration -= 5
+            reason_list.append("Recent performance dropping")
+        elif avg_score >= 80:
+            duration += 5
+            reason_list.append("Recent performance strong")
+        # Rule E: Clamp duration to safe limits
+    if duration < 10:
+        duration = 10
+        reason_list.append("Adjusted to minimum safe duration")
+
+    if duration > 50:
+        duration = 50
+        reason_list.append("Adjusted to maximum safe duration")
+
 
     # TODO: Implement logic in v2
+        # Final output
     return {
-        "session_type": None,
-        "recommended_duration": None,
-        "reasoning": None
+        "session_type": "focus" if duration >= 30 else "light",
+        "recommended_duration": duration,
+        "reasoning": reason_list
     }
+
 
 # -------------------------------
 #   NEW API ENDPOINT STUBS (v2)
@@ -198,9 +231,10 @@ def get_adaptive_plan():
         "recommended_category": None,
         "reasoning": None
     }
-
 if __name__ == "__main__":
+    print("Test:", generate_dynamic_session(...))
     app.run(host="127.0.0.1", port=5000, debug=True)
+
 
 
 
