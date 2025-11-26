@@ -117,6 +117,35 @@ def normalize_task(task):
 @app.route("/health", methods=["GET"])
 def health_check():
     return {"status": "ok", "message": "Backend running"}, 200
+# ----------------------------------------
+# Dynamic Study Session Generator (v1)
+# ----------------------------------------
+
+def generate_dynamic_session(fatigue, streak, recent_scores):
+    """
+    Purpose:
+        Calculate the ideal session duration and type
+        based on fatigue, streak, and performance history.
+
+    Inputs:
+        fatigue (int)
+        streak (int)
+        recent_scores (list)
+
+    Returns:
+        {
+            "session_type": None,
+            "recommended_duration": None,
+            "reasoning": None
+        }
+    """
+
+    # TODO: Implement logic in v2
+    return {
+        "session_type": None,
+        "recommended_duration": None,
+        "reasoning": None
+    }
 
 # -------------------------------
 #   NEW API ENDPOINT STUBS (v2)
