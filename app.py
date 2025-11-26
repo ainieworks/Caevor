@@ -123,6 +123,17 @@ def health_check():
 
 def generate_dynamic_session(fatigue, streak, recent_scores):
     """
+    # ---------------------------
+    # Phase 1: Base Rules
+    # ---------------------------
+
+    # Rule A: If fatigue is high (>= 7), reduce duration
+    # Rule B: If streak is strong (>= 5), increase duration
+    # Rule C: Use last 3 scores to detect performance trend
+    # Rule D: If scores are dropping, suggest short recovery session
+    # Rule E: If scores are stable or rising, suggest deep focus session
+    # Rule F: Minimum session = 10 min, Maximum = 50 min
+
     Purpose:
         Calculate the ideal session duration and type
         based on fatigue, streak, and performance history.
