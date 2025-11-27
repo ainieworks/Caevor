@@ -88,7 +88,7 @@ def priority():
             **task,
             "score": score
         })
-
+    
     # -----------------------------------------
     # Sort highest → lowest score
     # -----------------------------------------
@@ -114,6 +114,54 @@ def normalize_task(task):
         "createdAt": task.get("createdAt", None),
         "completed": task.get("completed", False)
     }
+def compute_momentum(streak: int, avg_score: float, fatigue: int) -> str:
+    """
+    Determine the user's momentum level based on recent streak, focus score,
+    and fatigue. Returns: 'high', 'medium', or 'low'.
+    """
+
+    # High momentum: good streak, strong scores, low fatigue
+    if streak >= 3 and avg_score >= 75 and fatigue <= 4:
+        return "high"
+
+    # Low momentum: tired, low score, or almost no streak
+    if streak <= 1 or avg_score <= 50 or fatigue >= 7:
+        return "low"
+
+    # Otherwise → medium
+    return "medium"
+def build_adaptive_plan(fatigue: int, streak: int, avg_score: float):
+    """
+    Generate a simple adaptive plan based on momentum.
+    Returns:
+        - recommended_session (minutes)
+        - intensity ('light', 'balanced', 'deep')
+        - note (short explanation)
+    """
+
+    momentum = compute_momentum(streak, avg_score, fatigue)
+
+    if momentum == "high":
+        return {
+            "recommended_session": 40,
+            "intensity": "deep",
+            "note": "High momentum detected — continue deep work while maintaining flow."
+        }
+
+    elif momentum == "medium":
+        return {
+            "recommended_session": 25,
+            "intensity": "balanced",
+            "note": "Moderate momentum — keep a balanced session with stable focus."
+        }
+
+    else:  # low momentum
+        return {
+            "recommended_session": 15,
+            "intensity": "light",
+            "note": "Low momentum — take a lighter session to recover and rebuild focus."
+        }
+
 @app.route("/health", methods=["GET"])
 def health_check():
     return {"status": "ok", "message": "Backend running"}, 200
@@ -220,19 +268,27 @@ def end_session():
         "message": "session saved",
         "session_summary": data
     }
-
-
-@app.route('/plan/adaptive', methods=['GET'])
+@app.get("/plan/adaptive")
 def get_adaptive_plan():
-    # TODO: Add adaptive session planning logic
-    return {
-        "recommended_session_type": None,
-        "recommended_duration": None,
-        "recommended_category": None,
-        "reasoning": None
-    }
+    """
+    Generate an adaptive study plan based on user inputs.
+    Query parameters expected:
+        - streak (int)
+        - avg_score (float)
+        - fatigue (int)
+    """
+
+    try:
+        streak = int(request.args.get("streak", 0))
+        avg_score = float(request.args.get("avg_score", 50))
+        fatigue = int(request.args.get("fatigue", 5))
+    except ValueError:
+        return {"error": "Invalid input types"}, 400
+
+    plan = build_adaptive_plan(fatigue=fatigue, streak=streak, avg_score=avg_score)
+    return plan
+
 if __name__ == "__main__":
-    print("Test:", generate_dynamic_session(...))
     app.run(host="127.0.0.1", port=5000, debug=True)
 
 
