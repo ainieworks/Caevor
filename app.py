@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from datetime import date, datetime
+suggestion_logs = []
 
 app = Flask(__name__)
 @app.route("/")
@@ -114,6 +115,125 @@ def normalize_task(task):
         "createdAt": task.get("createdAt", None),
         "completed": task.get("completed", False)
     }
+def compute_focus_score(recent_scores, streak):
+    """
+    Compute a simple focus score based on:
+    - recent performance scores (list of integers)
+    - current streak value
+    """
+
+    if not recent_scores:
+        base = 50   # neutral
+    else:
+        base = sum(recent_scores) / len(recent_scores)
+
+    # streak impact (mild)
+    streak_boost = min(streak * 2, 20)   # max +20 boost
+
+    focus_score = base + streak_boost
+
+    # keep score within valid range
+    return max(0, min(focus_score, 100))
+def generate_recommended_next_task(tasks, focus_score):
+    """
+    Pick the next task based on current focus_score and task metadata.
+
+    tasks: list of dicts coming from frontend or database.
+    focus_score: 0–100 value from compute_focus_score().
+    """
+
+    if not tasks:
+        return None, "No available tasks.", 0
+
+    # Filter out completed tasks if you have such a flag
+    active_tasks = [
+        t for t in tasks
+        if str(t.get("status", "")).lower() not in {"done", "completed"}
+    ] or tasks  # fallback if no status field
+
+    # Decide intensity band from focus_score
+    if focus_score >= 75:
+        target_difficulty = "high"
+    elif focus_score <= 40:
+        target_difficulty = "low"
+    else:
+        target_difficulty = "medium"
+
+    # Helper: convert any numeric difficulty to a band
+    def difficulty_band(task):
+        diff = task.get("difficulty", 3)  # 1–5 expected
+        if diff >= 4:
+            return "high"
+        elif diff <= 2:
+            return "low"
+        return "medium"
+
+    # Score each task for this moment
+    best_task = None
+    best_score = -1
+
+    for t in active_tasks:
+        score = 0
+
+        # 1) Match difficulty with current focus
+        if difficulty_band(t) == target_difficulty:
+            score += 40
+
+        # 2) Prefer tasks with nearer due dates (optional)
+        # (Safe: ignores errors if date missing)
+        due_str = t.get("dueDate")
+        if due_str:
+            try:
+                due = datetime.fromisoformat(due_str).date()
+                days_left = (due - date.today()).days
+                if days_left <= 1:
+                    score += 30
+                elif days_left <= 3:
+                    score += 20
+                elif days_left <= 7:
+                    score += 10
+            except ValueError:
+                pass
+
+        # 3) Slight bonus for shorter tasks when focus is low
+        est = t.get("estimatedMinutes") or t.get("estimated_time") or 25
+        try:
+            est = int(est)
+        except (TypeError, ValueError):
+            est = 25
+
+        if focus_score <= 40 and est <= 30:
+            score += 15
+        elif focus_score >= 75 and est >= 30:
+            score += 10
+
+        if score > best_score:
+            best_score = score
+            best_task = t
+
+    # Fallback if something weird happens
+    if best_task is None:
+        best_task = active_tasks[0]
+        reason = "Defaulted to first active task."
+    else:
+        if target_difficulty == "high":
+            reason = "High focus detected — choosing a demanding task."
+        elif target_difficulty == "low":
+            reason = "Lower focus — selecting a lighter, shorter task."
+        else:
+            reason = "Moderate focus — choosing a balanced task."
+
+    # Recommended duration: reuse task estimate (or a default)
+    recommended_duration = best_task.get("estimatedMinutes") or \
+                           best_task.get("estimated_time") or 25
+
+    try:
+        recommended_duration = int(recommended_duration)
+    except (TypeError, ValueError):
+        recommended_duration = 25
+
+    return best_task, reason, recommended_duration
+
 def compute_momentum(streak: int, avg_score: float, fatigue: int) -> str:
     """
     Determine the user's momentum level based on recent streak, focus score,
@@ -242,24 +362,42 @@ def generate_dynamic_session(fatigue, streak, recent_scores):
 # -------------------------------
 #   NEW API ENDPOINT STUBS (v2)
 # -------------------------------
+@app.route("/suggestions/next", methods=["POST"])
+def get_next_suggestion():
+    data = request.get_json() or {}
+
+    tasks = data.get("tasks", [])
+    recent_scores = data.get("recent_scores", [])
+    streak = data.get("streak", 0)
+
+    avg_score = sum(recent_scores) / len(recent_scores) if recent_scores else 60
+    fatigue = 5  # placeholder until you add real fatigue tracking
+    momentum = compute_momentum(streak, avg_score, fatigue)
+
+
+    # 2) Compute focus score (Step 1)
+    focus_score = compute_focus_score(recent_scores, streak)
+
+    # 3) Pick best next task (Step 2)
+    best_task, reason, duration = generate_recommended_next_task(tasks, focus_score)
+
+    # 4) Log the suggestion (Part B)
+    log_suggestion(best_task, focus_score, momentum, reason)
+
+    return jsonify({
+        "success": True,
+        "task": best_task,
+        "reason": reason,
+        "focus_score": focus_score,
+        "momentum": momentum,
+        "recommended_duration": duration
+    })
 
 @app.route('/tasks/score', methods=['POST'])
 def submit_score():
     # TODO: Add score processing logic
     data = request.get_json()
     return {"message": "score saved", "weighted_score": None}
-
-
-@app.route('/suggestions/next', methods=['GET'])
-def get_next_suggestion():
-    # TODO: Add adaptive suggestion logic
-    return {
-        "suggestion_text": None,
-        "reason": None,
-        "recommended_duration": None
-    }
-
-
 @app.route('/sessions/end', methods=['POST'])
 def end_session():
     # TODO: Add session ending and save logic
