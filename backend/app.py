@@ -409,9 +409,27 @@ def get_next_suggestion():
 
 @app.route('/tasks/score', methods=['POST'])
 def submit_score():
-    # TODO: Add score processing logic
-    data = request.get_json()
-    return {"message": "score saved", "weighted_score": None}
+    data = request.get_json() or {}
+
+    task_id = data.get("task_id")
+    session_id = data.get("session_id")
+    raw_score = data.get("raw_score")
+    fatigue_level = data.get("fatigue_level", 5)
+    streak = data.get("streak", 0)
+
+    # Simple weighting formula
+    weighted_score = raw_score - (fatigue_level * 2) + (streak * 3)
+    weighted_score = max(0, min(100, weighted_score))
+
+    insert_data("""
+        INSERT INTO focus_scores (task_id, session_id, raw_score, weighted_score, streak, fatigue_level)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (task_id, session_id, raw_score, weighted_score, streak, fatigue_level))
+
+    return jsonify({
+        "message": "score saved",
+        "weighted_score": weighted_score
+    }), 200
 @app.route('/sessions/end', methods=['POST'])
 def end_session():
     # TODO: Add session ending and save logic
