@@ -1,8 +1,10 @@
+from database import get_connection, init_db
 from flask import Flask, jsonify, request
 from datetime import date, datetime
 suggestion_logs = []
 
 app = Flask(__name__)
+init_db()
 @app.route("/")
 def index():
     return "DeepFocus+ backend is running"
@@ -233,7 +235,20 @@ def generate_recommended_next_task(tasks, focus_score):
         recommended_duration = 25
 
     return best_task, reason, recommended_duration
+def insert_data(query, params=()):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(query, params)
+    conn.commit()
+    conn.close()
 
+def fetch_data(query, params=()):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
 def compute_momentum(streak: int, avg_score: float, fatigue: int) -> str:
     """
     Determine the user's momentum level based on recent streak, focus score,
@@ -382,8 +397,7 @@ def get_next_suggestion():
     best_task, reason, duration = generate_recommended_next_task(tasks, focus_score)
 
     # 4) Log the suggestion (Part B)
-    log_suggestion(best_task, focus_score, momentum, reason)
-
+    
     return jsonify({
         "success": True,
         "task": best_task,
