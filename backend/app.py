@@ -432,12 +432,34 @@ def submit_score():
     }), 200
 @app.route('/sessions/end', methods=['POST'])
 def end_session():
-    # TODO: Add session ending and save logic
-    data = request.get_json()
-    return {
+    data = request.get_json() or {}
+
+    task_id = data.get("task_id")
+    session_id = data.get("session_id")
+    start_time = data.get("start_time")
+    end_time = data.get("end_time")
+    duration = data.get("duration")
+    fatigue_level = data.get("fatigue_level", 5)
+
+    # Calculate duration if not provided
+    if not duration and start_time and end_time:
+        from datetime import datetime
+        fmt = "%Y-%m-%d %H:%M:%S"
+        duration = (datetime.strptime(end_time, fmt) - datetime.strptime(start_time, fmt)).seconds // 60
+
+    insert_data("""
+        INSERT INTO session_history (task_id, start_time, end_time, duration, fatigue_level)
+        VALUES (?, ?, ?, ?, ?)
+    """, (task_id, start_time, end_time, duration, fatigue_level))
+
+    return jsonify({
         "message": "session saved",
-        "session_summary": data
-    }
+        "session_summary": {
+            "task_id": task_id,
+            "duration": duration,
+            "fatigue_level": fatigue_level
+        }
+    }), 200
 @app.get("/plan/adaptive")
 def get_adaptive_plan():
     """
