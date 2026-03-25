@@ -5,7 +5,7 @@ Smart, self-adaptive study & focus planner designed to help learners manage time
 ---
 
 ## 🌟 Overview
-Caevor is a final-year research and development project exploring how AI-driven logic can adapt to human learning behaviour.  
+Caevor is a research and development project exploring how AI-driven logic can adapt to human learning behaviour.  
 It integrates an adaptive backend, visual task management UI, and research components for focus and productivity tracking.
 
 ---
