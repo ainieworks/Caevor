@@ -1,17 +1,17 @@
-# DeepFocus+
+# Caevor
 
 Smart, self-adaptive study & focus planner designed to help learners manage time, priorities, and mental focus.
 
 ---
 
 ## 🌟 Overview
-DeepFocus+ is a final-year research and development project exploring how AI-driven logic can adapt to human learning behaviour.  
+Caevor is a final-year research and development project exploring how AI-driven logic can adapt to human learning behaviour.  
 It integrates an adaptive backend, visual task management UI, and research components for focus and productivity tracking.
 
 ---
 ## 🎯 Model-Driven Software Development (MDSD)
 
-DeepFocus+ now includes MDSD-based modelling as part of its FYP structure.  
+Caevor now includes MDSD-based modelling as part of its FYP structure.  
 All MDSD artefacts—including **domain models, meta-models, activity diagrams, state machine diagrams, and sequence mappings**—are now maintained in the `/docs/DeepFocusPlus_MDSD_Documentation.md` file.
 
 This ensures clear alignment with Model-Driven Software Development principles and supports future automated transformations from models to implementation.
@@ -35,8 +35,8 @@ This ensures clear alignment with Model-Driven Software Development principles a
 ## 🚀 Quick Start
 ```bash
 # Clone the repo
-git clone https://github.com/<your-username>/DeepFocusPlus.git
-cd DeepFocusPlus/backend
+git clone https://github.com/ainieworks/Caevor.git
+cd Caevor/backend
 
 # Create virtual environment
 python -m venv .venv
