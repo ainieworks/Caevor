@@ -381,6 +381,38 @@ def generate_dynamic_session(fatigue, streak, recent_scores):
 def get_next_suggestion():
     data = request.get_json() or {}
 
+    task_id = data.get("task_id")
+    session_id = data.get("session_id")
+    fatigue_level = data.get("fatigue_level", 5)
+    streak = data.get("streak", 0)
+    recent_scores = data.get("recent_scores", [])
+
+    avg_score = sum(recent_scores) / len(recent_scores) if recent_scores else 60
+
+    # Generate suggestion based on fatigue and performance
+    if fatigue_level >= 7:
+        suggestion_text = "Take a 10 minute break. You seem tired."
+    elif avg_score >= 75 and streak >= 3:
+        suggestion_text = "Great momentum! Start a 40 minute deep work session."
+    elif avg_score < 60:
+        suggestion_text = "Try a light 15 minute review session to rebuild focus."
+    else:
+        suggestion_text = "Start a balanced 25 minute focus session."
+
+    # Save suggestion to database
+    insert_data("""
+        INSERT INTO suggestion_logs (task_id, session_id, suggestion_text, fatigue_level, score, streak)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (task_id, session_id, suggestion_text, fatigue_level, avg_score, streak))
+
+    return jsonify({
+        "suggestion": suggestion_text,
+        "fatigue_level": fatigue_level,
+        "avg_score": avg_score,
+        "streak": streak
+    }), 200
+    data = request.get_json() or {}
+
     tasks = data.get("tasks", [])
     recent_scores = data.get("recent_scores", [])
     streak = data.get("streak", 0)
