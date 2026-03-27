@@ -1,9 +1,11 @@
 from database import get_connection, init_db
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from datetime import date, datetime
 suggestion_logs = []
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 init_db()
 @app.route("/")
 def index():

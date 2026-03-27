@@ -218,6 +218,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
     localStorage.setItem("tasks", JSON.stringify(tasks));
     autoRerank();
+    // Send score to backend
+fetch("http://127.0.0.1:5000/tasks/score", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+        task_id: index,
+        session_id: index,
+        raw_score: minutes * 2,
+        fatigue_level: t.interruptions || 0,
+        streak: t.sessions || 0
+    })
+}).then(res => res.json())
+  .then(data => console.log("Score saved:", data))
+  .catch(err => console.warn("Backend offline:", err));
+
+// Send session end to backend
+fetch("http://127.0.0.1:5000/sessions/end", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+        task_id: index,
+        session_id: index,
+        duration: minutes,
+        fatigue_level: t.interruptions || 0
+    })
+}).then(res => res.json())
+  .then(data => console.log("Session saved:", data))
+  .catch(err => console.warn("Backend offline:", err));
   }
 
   function autoRerank() {
