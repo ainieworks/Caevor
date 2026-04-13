@@ -71,16 +71,16 @@ document.addEventListener("DOMContentLoaded", function () {
         let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
         tasks.push({
-            text:         taskText,
-            importance:   priority,
-            dueDate:      dueDateInput || null,
-            createdAt:    Date.now(),
-            sessions:     0,
-            focusMinutes: 0,
-            interruptions:0,
-            completed:    false,
-            skipped:      0,
-            adaptWeight:  0,
+            text:          taskText,
+            importance:    priority,
+            dueDate:       dueDateInput || null,
+            createdAt:     Date.now(),
+            sessions:      0,
+            focusMinutes:  0,
+            interruptions: 0,
+            completed:     false,
+            skipped:       0,
+            adaptWeight:   0,
         });
 
         localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -96,11 +96,11 @@ document.addEventListener("DOMContentLoaded", function () {
     function showStatus(msg, success = false) {
         const el = document.getElementById("statusMessage");
         if (!el) return;
-        el.textContent = msg;
-        el.style.display = "block";
-        el.style.background  = success ? "rgba(62,255,160,0.09)" : "rgba(255,85,114,0.09)";
-        el.style.color       = success ? "#3effa0" : "#ff5572";
-        el.style.borderColor = success ? "rgba(62,255,160,0.3)" : "rgba(255,85,114,0.3)";
+        el.textContent      = msg;
+        el.style.display    = "block";
+        el.style.background = success ? "rgba(62,255,160,0.09)"  : "rgba(255,85,114,0.09)";
+        el.style.color      = success ? "#3effa0"                : "#ff5572";
+        el.style.borderColor= success ? "rgba(62,255,160,0.3)"   : "rgba(255,85,114,0.3)";
         setTimeout(() => { el.style.display = "none"; }, 2000);
     }
 
@@ -159,15 +159,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const t = tasks[index];
         if (!t) return;
 
-        t.sessions      = (t.sessions || 0) + 1;
-        t.focusMinutes  = (t.focusMinutes || 0) + Math.max(0, minutes);
+        t.sessions      = (t.sessions      || 0) + 1;
+        t.focusMinutes  = (t.focusMinutes  || 0) + Math.max(0, minutes);
         t.interruptions = (t.interruptions || 0) + Math.max(0, interruptions);
         if (completed) t.completed = true;
         if (skipped)   t.skipped = (t.skipped || 0) + 1;
 
-        const focusBoost      = Math.min(30, minutes);
+        const focusBoost       = Math.min(30, minutes);
         const interruptPenalty = Math.min(20, interruptions * 3);
-        const skipPenalty     = Math.min(15, (t.skipped || 0) * 2);
+        const skipPenalty      = Math.min(15, (t.skipped || 0) * 2);
 
         t.adaptWeight = clamp(
             (t.adaptWeight || 0) + focusBoost - interruptPenalty - skipPenalty,
@@ -176,6 +176,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         localStorage.setItem("tasks", JSON.stringify(tasks));
         autoRerank();
+
+        // Refresh right panel stats
+        if (window.updateRightPanel) window.updateRightPanel();
 
         // Send score to backend
         fetch("http://127.0.0.1:5000/tasks/score", {
@@ -186,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 session_id:    index,
                 raw_score:     minutes * 2,
                 fatigue_level: t.interruptions || 0,
-                streak:        t.sessions || 0,
+                streak:        t.sessions      || 0,
             })
         }).then(r => r.json())
           .then(d => console.log("Score saved:", d))
@@ -236,7 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
         tasks.sort((a, b) => b.score - a.score);
         localStorage.setItem("tasks", JSON.stringify(tasks));
 
-        // Update count
+        // Update task count
         const countEl = document.getElementById("taskCount");
         if (countEl) countEl.textContent = `${tasks.length} task${tasks.length !== 1 ? "s" : ""}`;
 
@@ -245,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (tasks.length === 0) {
             const empty = document.createElement("p");
-            empty.id = "noTaskText";
+            empty.id          = "noTaskText";
             empty.textContent = "No tasks yet. Add one above to get started.";
             taskList.appendChild(empty);
             return;
@@ -380,30 +383,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return score;
     }
-
-    // ─────────────────────────────────────
-    //  IMAGE PROCESSING
-    // ─────────────────────────────────────
-    const imageInput      = document.getElementById("imageInput");
-    const processImageBtn = document.getElementById("processImageBtn");
-    const previewCanvas   = document.getElementById("previewCanvas");
-
-    processImageBtn.addEventListener("click", async function () {
-        const file = imageInput.files[0];
-        if (!file) { alert("Please select an image first."); return; }
-
-        try {
-            const result = await preprocessImage(file, {
-                size: 256, cropSquare: true, grayscale: false, output: "canvas"
-            });
-
-            previewCanvas.style.display = "block";
-            previewCanvas.getContext("2d").drawImage(result.canvas, 0, 0);
-            console.log("Image processed:", result.meta);
-        } catch (err) {
-            console.error("Image processing failed:", err);
-        }
-    });
 
     // ─────────────────────────────────────
     //  INIT
