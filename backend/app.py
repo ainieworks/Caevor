@@ -1,12 +1,108 @@
-from database import get_connection, init_db
-from flask import Flask, jsonify, request
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 from datetime import date, datetime
-suggestion_logs = []
+from werkzeug.security import generate_password_hash, check_password_hash
+from database import get_connection, init_db, insert_data, fetch_data
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+app.secret_key = os.getenv("SECRET_KEY", "fallback_secret_key")
+CORS(app, supports_credentials=True)
 init_db()
+
+# ─────────────────────────────────────
+# AUTH — SIGNUP
+# ─────────────────────────────────────
+@app.route("/auth/signup", methods=["POST"])
+def signup():
+    data     = request.get_json() or {}
+    email    = data.get("email", "").strip().lower()
+    password = data.get("password", "")
+
+    # Basic validation
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
+
+    if len(password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters"}), 400
+
+    # Check if email already exists
+    existing = fetch_data("SELECT user_id FROM users WHERE email = ?", (email,))
+    if existing:
+        return jsonify({"error": "Email already registered"}), 409
+
+    # Hash password and save user
+    hashed = generate_password_hash(password)
+    insert_data(
+        "INSERT INTO users (email, password) VALUES (?, ?)",
+        (email, hashed)
+    )
+
+    return jsonify({"message": "Account created successfully"}), 201
+
+
+# ─────────────────────────────────────
+# AUTH — LOGIN
+# ─────────────────────────────────────
+@app.route("/auth/login", methods=["POST"])
+def login():
+    data     = request.get_json() or {}
+    email    = data.get("email", "").strip().lower()
+    password = data.get("password", "")
+
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
+
+    # Find user
+    rows = fetch_data("SELECT user_id, password FROM users WHERE email = ?", (email,))
+    if not rows:
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    user = rows[0]
+
+    # Verify password
+    if not check_password_hash(user["password"], password):
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    # Save user in session
+    session["user_id"] = user["user_id"]
+    session["email"]   = email
+
+    return jsonify({
+        "message": "Login successful",
+        "user_id": user["user_id"],
+        "email":   email
+    }), 200
+
+
+# ─────────────────────────────────────
+# AUTH — LOGOUT
+# ─────────────────────────────────────
+@app.route("/auth/logout", methods=["POST"])
+def logout():
+    session.clear()
+    return jsonify({"message": "Logged out"}), 200
+# ─────────────────────────────────────
+# AUTH — GET CURRENT USER
+# ─────────────────────────────────────
+@app.route("/auth/me", methods=["GET"])
+def get_me():
+    if "user_id" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+
+    return jsonify({
+        "user_id": session["user_id"],
+        "email":   session["email"]
+    }), 200
+
 @app.route("/")
 def index():
     return "DeepFocus+ backend is running"
