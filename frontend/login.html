@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Caevor — Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:        #0d0d10;
+            --surface:   #16161a;
+            --surface-2: #1e1e24;
+            --border:    #2e2e38;
+            --text:      #f0f0f8;
+            --text-sub:  #9999b0;
+            --text-dim:  #44445a;
+            --accent:    #7b68ee;
+            --accent-glow: rgba(123,104,238,0.18);
+            --red:       #ff5572;
+            --red-soft:  rgba(255,85,114,0.09);
+            --green:     #3effa0;
+            --green-soft:rgba(62,255,160,0.09);
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-wrap {
+            width: 100%;
+            max-width: 420px;
+            padding: 24px;
+        }
+
+        /* Logo */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            justify-content: center;
+            margin-bottom: 32px;
+            text-decoration: none;
+        }
+
+        .logo-mark { width: 36px; height: 36px; }
+
+        .logo-word {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -0.6px;
+            color: var(--text);
+        }
+
+        .logo-word span { color: var(--accent); }
+
+        /* Card */
+        .auth-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .auth-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+
+        .auth-sub {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 28px;
+        }
+
+        /* Fields */
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: var(--text-sub);
+        }
+
+        .field input {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 11px 14px;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.15s;
+            width: 100%;
+        }
+
+        .field input::placeholder { color: var(--text-dim); }
+
+        .field input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* Button */
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: var(--accent);
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-top: 8px;
+        }
+
+        .btn-submit:hover {
+            background: #9580ff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 18px var(--accent-glow);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Status message */
+        .status-msg {
+            display: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .status-msg.error {
+            background: var(--red-soft);
+            border: 1px solid rgba(255,85,114,0.3);
+            color: var(--red);
+        }
+
+        .status-msg.success {
+            background: var(--green-soft);
+            border: 1px solid rgba(62,255,160,0.3);
+            color: var(--green);
+        }
+
+        /* Footer link */
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-sub);
+        }
+
+        .auth-footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover { text-decoration: underline; }
+
+        /* Tagline */
+        .tagline {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 12px;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-wrap">
+
+    <!-- Logo -->
+    <a class="logo" href="#">
+        <svg class="logo-mark" viewBox="0 0 34 34" fill="none">
+            <rect width="34" height="34" rx="9" fill="#7b68ee" fill-opacity="0.15"/>
+            <path d="M24 11.5C22.2 9.9 19.7 9 17 9C11.5 9 7 13.5 7 19C7 24.5 11.5 29 17 29C19.7 29 22.2 28.1 24 26.5"
+                  stroke="#7b68ee" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="24.5" cy="19" r="3" fill="#7b68ee"/>
+            <circle cx="24.5" cy="19" r="1.2" fill="white"/>
+        </svg>
+        <span class="logo-word">Cae<span>vor</span></span>
+    </a>
+
+    <!-- Card -->
+    <div class="auth-card">
+        <div class="auth-title">Welcome back</div>
+        <div class="auth-sub">Sign in to continue your focus journey</div>
+
+        <div class="status-msg" id="statusMsg"></div>
+
+        <div class="field">
+            <label>Email</label>
+            <input type="email" id="emailInput" placeholder="you@example.com" autocomplete="email">
+        </div>
+
+        <div class="field">
+            <label>Password</label>
+            <input type="password" id="passwordInput" placeholder="••••••••" autocomplete="current-password">
+        </div>
+
+        <button class="btn-submit" id="loginBtn">Sign In</button>
+    </div>
+
+    <div class="auth-footer">
+        Don't have an account? <a href="signup.html">Create one</a>
+    </div>
+
+    <div class="tagline">"Yes. You can. Look — I did."</div>
+
+</div>
+
+<script>
+    const BACKEND = "http://127.0.0.1:5000";
+    // Clear error when user starts typing
+document.getElementById("emailInput").addEventListener("input", function() {
+    document.getElementById("statusMsg").style.display = "none";
+});
+document.getElementById("passwordInput").addEventListener("input", function() {
+    document.getElementById("statusMsg").style.display = "none";
+});
+
+    function showMsg(msg, type) {
+        const el = document.getElementById("statusMsg");
+        el.textContent  = msg;
+        el.className    = `status-msg ${type}`;
+        el.style.display = "block";
+    }
+
+    document.getElementById("loginBtn").addEventListener("click", async function() {
+        const email    = document.getElementById("emailInput").value.trim();
+        const password = document.getElementById("passwordInput").value;
+        const btn      = document.getElementById("loginBtn");
+
+        if (!email || !password) {
+            showMsg("Please enter your email and password.", "error");
+            return;
+        }
+
+        btn.disabled    = true;
+        btn.textContent = "Signing in...";
+
+        try {
+            const res = await fetch(`${BACKEND}/auth/login`, {
+                method:      "POST",
+                headers:     { "Content-Type": "application/json" },
+                credentials: "include",
+                body:        JSON.stringify({ email, password })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                // Save user info to localStorage
+                localStorage.setItem("caevor_user", JSON.stringify({
+                    user_id: data.user_id,
+                    email:   data.email
+                }));
+                showMsg("Login successful! Redirecting...", "success");
+                setTimeout(() => {
+                    window.location.href = "index_main.html";
+                }, 800);
+            } else {
+                showMsg(data.error || "Login failed.", "error");
+                btn.disabled    = false;
+                btn.textContent = "Sign In";
+            }
+
+        } catch {
+            showMsg("Cannot connect to server. Is Flask running?", "error");
+            btn.disabled    = false;
+            btn.textContent = "Sign In";
+        }
+    });
+
+    // Allow pressing Enter to submit
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            document.getElementById("loginBtn").click();
+        }
+    });
+</script>
+
+</body>
+</html>

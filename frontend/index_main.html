@@ -491,6 +491,13 @@
     </style>
 </head>
 <body>
+    <script>
+    // Auth guard — redirect to login if not logged in
+    const caevorUser = localStorage.getItem("caevor_user");
+    if (!caevorUser) {
+        window.location.href = "login.html";
+    }
+</script>
 
 <!-- HEADER -->
 <header>
@@ -507,6 +514,9 @@
     <div class="header-right">
         <div class="header-badge">focus system · v1.0</div>
         <button class="theme-toggle" id="themeToggle" title="Toggle theme">☀️</button>
+        <button class="theme-toggle" id="logoutBtn" title="Logout" style="font-size:13px;width:auto;padding:0 12px;">
+    Sign out
+</button>
     </div>
 </header>
 
@@ -985,6 +995,23 @@
         }
     }
 </script>
+<script>
+    // Show logged in user email
+    const userData = JSON.parse(localStorage.getItem("caevor_user") || "{}");
+    const badge = document.querySelector(".header-badge");
+    if (badge && userData.email) {
+        badge.textContent = userData.email;
+    }
 
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", async function() {
+        await fetch("http://127.0.0.1:5000/auth/logout", {
+            method: "POST",
+            credentials: "include"
+        });
+        localStorage.removeItem("caevor_user");
+        window.location.href = "login.html";
+    });
+</script>
 </body>
 </html>

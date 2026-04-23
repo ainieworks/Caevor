@@ -106,7 +106,116 @@ def get_me():
 @app.route("/")
 def index():
     return "DeepFocus+ backend is running"
+# ─────────────────────────────────────
+# HELPER — Get current logged in user
+# ─────────────────────────────────────
+def get_current_user():
+    """Returns user_id if logged in, None if not."""
+    return session.get("user_id")
 
+
+# ─────────────────────────────────────
+# TASKS — Get all tasks for logged in user
+# ─────────────────────────────────────
+@app.route("/tasks", methods=["GET"])
+def get_tasks():
+    user_id = get_current_user()
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+
+    rows = fetch_data("""
+        SELECT task_id, title, category, difficulty,
+               estimated_time, created_at
+        FROM tasks
+        WHERE user_id = ?
+        ORDER BY created_at DESC
+    """, (user_id,))
+
+    tasks = [dict(row) for row in rows]
+    return jsonify({"tasks": tasks}), 200
+
+
+# ─────────────────────────────────────
+# TASKS — Create a new task
+# ─────────────────────────────────────
+@app.route("/tasks", methods=["POST"])
+def create_task():
+    user_id = get_current_user()
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+
+    data           = request.get_json() or {}
+    title          = data.get("title", "").strip()
+    category       = data.get("category", "general")
+    difficulty     = data.get("difficulty", 3)
+    estimated_time = data.get("estimated_time", 25)
+
+    if not title:
+        return jsonify({"error": "Task title is required"}), 400
+
+    insert_data("""
+        INSERT INTO tasks (user_id, title, category, difficulty, estimated_time)
+        VALUES (?, ?, ?, ?, ?)
+    """, (user_id, title, category, difficulty, estimated_time))
+
+    # Fetch the newly created task to return it
+    rows = fetch_data("""
+        SELECT task_id, title, category, difficulty, estimated_time, created_at
+        FROM tasks
+        WHERE user_id = ? ORDER BY task_id DESC LIMIT 1
+    """, (user_id,))
+
+    return jsonify({"message": "Task created", "task": dict(rows[0])}), 201
+
+
+# ─────────────────────────────────────
+# TASKS — Delete a task
+# ─────────────────────────────────────
+@app.route("/tasks/<int:task_id>", methods=["DELETE"])
+def delete_task(task_id):
+    user_id = get_current_user()
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+
+    # Make sure task belongs to this user
+    rows = fetch_data("""
+        SELECT task_id FROM tasks WHERE task_id = ? AND user_id = ?
+    """, (task_id, user_id))
+
+    if not rows:
+        return jsonify({"error": "Task not found"}), 404
+
+    insert_data("DELETE FROM tasks WHERE task_id = ?", (task_id,))
+    return jsonify({"message": "Task deleted"}), 200
+
+
+# ─────────────────────────────────────
+# TASKS — Update a task title
+# ─────────────────────────────────────
+@app.route("/tasks/<int:task_id>", methods=["PUT"])
+def update_task(task_id):
+    user_id = get_current_user()
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+
+    data  = request.get_json() or {}
+    title = data.get("title", "").strip()
+
+    if not title:
+        return jsonify({"error": "Title is required"}), 400
+
+    rows = fetch_data("""
+        SELECT task_id FROM tasks WHERE task_id = ? AND user_id = ?
+    """, (task_id, user_id))
+
+    if not rows:
+        return jsonify({"error": "Task not found"}), 404
+
+    insert_data("""
+        UPDATE tasks SET title = ? WHERE task_id = ?
+    """, (title, task_id))
+
+    return jsonify({"message": "Task updated"}), 200
 @app.post("/api/priority")
 def priority():
     """
