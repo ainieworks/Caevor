@@ -10,13 +10,31 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_connection, init_db, insert_data, fetch_data
 from dotenv import load_dotenv
 import os
+from flask import send_from_directory
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "fallback_secret_key")
-CORS(app, supports_credentials=True)
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"]   = False
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_DOMAIN"]   = None
+CORS(app,
+     supports_credentials=True,
+     origins=["http://localhost:8080"],
+     allow_headers=["Content-Type"],
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 init_db()
+# ─────────────────────────────────────
+# SERVE FRONTEND FILES
+# ─────────────────────────────────────
+@app.route("/app")
+@app.route("/app/<path:filename>")
+def serve_frontend(filename="index_main.html"):
+    import os
+    frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend")
+    return send_from_directory(frontend_path, filename)
 
 # ─────────────────────────────────────
 # AUTH — SIGNUP
@@ -240,7 +258,69 @@ def priority():
       ]
     }
     """
+# ─────────────────────────────────────
+# GOALS — Save user goal
+# ─────────────────────────────────────
+@app.route("/goals", methods=["POST"])
+def save_goal():
+    user_id = get_current_user()
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
 
+    data     = request.get_json() or {}
+    goal     = data.get("goal", "").strip()
+    timeline = data.get("timeline", "").strip()
+    situation= data.get("situation", "").strip()
+    resources= data.get("resources", "").strip()
+
+    if not goal or not timeline:
+        return jsonify({"error": "Goal and timeline are required"}), 400
+
+    insert_data("""
+        INSERT INTO roadmaps (user_id, goal, timeline, situation, resources, roadmap_json)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (user_id, goal, timeline, situation, resources, ""))
+
+    # Get the new roadmap id
+    rows = fetch_data("""
+        SELECT roadmap_id FROM roadmaps
+        WHERE user_id = ? ORDER BY roadmap_id DESC LIMIT 1
+    """, (user_id,))
+
+    roadmap_id = rows[0]["roadmap_id"] if rows else None
+
+    return jsonify({
+        "message":    "Goal saved",
+        "roadmap_id": roadmap_id,
+        "goal":       goal,
+        "timeline":   timeline,
+        "situation":  situation,
+        "resources":  resources
+    }), 201
+
+
+# ─────────────────────────────────────
+# GOALS — Get current user's goal
+# ─────────────────────────────────────
+@app.route("/goals", methods=["GET"])
+def get_goal():
+    user_id = get_current_user()
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+
+    rows = fetch_data("""
+        SELECT roadmap_id, goal, timeline, roadmap_json, created_at
+        FROM roadmaps
+        WHERE user_id = ?
+        ORDER BY roadmap_id DESC LIMIT 1
+    """, (user_id,))
+
+    if not rows:
+        return jsonify({"has_goal": False}), 200
+
+    row = dict(rows[0])
+    row["has_goal"] = True
+    return jsonify(row), 200
     # -----------------------------------------
     # Safely read JSON from request
     # -----------------------------------------

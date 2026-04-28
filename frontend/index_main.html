@@ -492,11 +492,26 @@
 </head>
 <body>
     <script>
-    // Auth guard — redirect to login if not logged in
-    const caevorUser = localStorage.getItem("caevor_user");
-    if (!caevorUser) {
-        window.location.href = "login.html";
-    }
+    // Auth guard — hide page until verified
+    document.documentElement.style.visibility = "hidden";
+    (async function() {
+        try {
+            const res = await fetch("/auth/me", {
+    credentials: "include"
+});
+            if (!res.ok) {
+                window.location.href = "login.html";
+                return;
+            }
+        } catch {
+            const user = localStorage.getItem("caevor_user");
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+        }
+        document.documentElement.style.visibility = "visible";
+    })();
 </script>
 
 <!-- HEADER -->
@@ -527,6 +542,9 @@
     <aside>
         <div class="sidebar-section">
             <span class="sidebar-label">Workspace</span>
+            <button class="nav-link" onclick="window.location.href='goal_setup.html'">
+    <span class="nav-icon">🎯</span> Set My Goal
+</button>
             <button class="nav-link active" onclick="showPage('tasks',this)">
                 <span class="nav-icon">◈</span> Tasks
             </button>

@@ -4,7 +4,7 @@ import { preprocessImage } from './imagePreprocess.js';
 //   Caevor — Task Logic (v2 — DB Connected)
 // ═══════════════════════════════════════
 
-const BACKEND = "http://127.0.0.1:5000";
+const BACKEND = "";
 
 document.addEventListener("DOMContentLoaded", async function () {
 
